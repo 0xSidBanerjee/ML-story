@@ -1,65 +1,199 @@
-import Image from "next/image";
+"use client";
+import React, { useState, useEffect } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import Loader from "@/components/Loader";
+import StorySlide from "@/components/StorySlide";
+import Finale from "@/components/Finale";
+import StoryProgress from "@/components/StoryProgress";
+import AudioManager from "@/components/AudioManager";
+import CinematicTransition from "@/components/CinematicTransition";
+import { storySlides } from "@/data/story";
 
 export default function Home() {
+  const [loading, setLoading] = useState(true);
+  const [showTransition, setShowTransition] = useState(false); // Phase B State
+  const [startStory, setStartStory] = useState(false);
+  const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
+  const [restartKey, setRestartKey] = useState(0); // Key to force re-render/reset
+
+  // Handle Loader Complete -> Phase B
+  const handleLoaderComplete = () => {
+    setLoading(false);
+    setShowTransition(true); 
+  };
+
+  // Handle Transition Complete -> Phase C (Story)
+  const handleTransitionComplete = () => {
+    setShowTransition(false);
+    setStartStory(true);
+  };
+
+  const handleNextSlide = () => {
+    if (currentSlideIndex < storySlides.length - 1) {
+      setCurrentSlideIndex((prev) => prev + 1);
+    }
+  };
+
+  const handlePrevSlide = () => {
+    if (currentSlideIndex > 0) {
+      setCurrentSlideIndex((prev) => prev - 1);
+    }
+  };
+
+  // ----------------------------------------------------
+  // PAUSE LOGIC
+  // ----------------------------------------------------
+  const handlePause = () => setIsPaused(true);
+  const handleResume = () => setIsPaused(false);
+
+  // ----------------------------------------------------
+  // DYNAMIC DURATION LOGIC
+  // ----------------------------------------------------
+  const getSlideDuration = (index: number) => {
+    // If it's the finale, no auto-advance functionality needed (handled by component), 
+    // but we return a value for safety.
+    if (index >= storySlides.length) return 5000;
+    
+    const slide = storySlides[index];
+    if (slide.visualType === 'finale') return 999999; // Indefinite
+
+    // Formula:
+    // Stagger Delay per line: 0.8s
+    // Initial Delay: 0.4s
+    // Fade Duration: 0.6s
+    // Reading Buffer: 3s
+    const lineCount = slide.lines ? slide.lines.length : 1;
+    const animationTime = 0.4 + ((lineCount - 1) * 0.8) + 0.6;
+    const totalDuration = (animationTime + 3.0) * 1000; // Convert to ms
+
+    return Math.max(5000, totalDuration); // Minimum 5s
+  };
+
+  const activeSlideDuration = getSlideDuration(currentSlideIndex);
+
+  // ----------------------------------------------------
+  // RESTART LOGIC
+  // ----------------------------------------------------
+  const handleRestart = () => {
+    // Increment key to fully unmount and remount components to reset their internal states
+    setRestartKey(prev => prev + 1);
+    setLoading(true);
+    setShowTransition(false);
+    setStartStory(false);
+    setCurrentSlideIndex(0);
+    setIsPaused(false);
+  };
+
+  // Preload Images
+  useEffect(() => {
+    storySlides.forEach((slide) => {
+      if (slide.image) {
+        const link = document.createElement("link");
+        link.rel = "preload";
+        link.as = "image";
+        link.href = slide.image;
+        document.head.appendChild(link);
+      }
+    });
+  }, []);
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+    <main 
+        key={restartKey}
+        className="relative w-full h-screen overflow-hidden bg-retro-cream select-none touch-none"
+    >
+      <AnimatePresence mode="wait">
+        {loading && <Loader onComplete={handleLoaderComplete} />}
+      </AnimatePresence>
+
+      <AnimatePresence mode="wait">
+        {showTransition && <CinematicTransition onComplete={handleTransitionComplete} />}
+      </AnimatePresence>
+
+      <AnimatePresence mode="wait">
+        {startStory && (
+          <motion.div
+            key="story-container"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="w-full h-full"
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
+            {/* Progress Bar - Restored and Active */}
+            <StoryProgress
+              totalSlides={storySlides.length}
+              currentIndex={currentSlideIndex}
+              duration={activeSlideDuration} // Dynamic based on text length
+              onSlideComplete={handleNextSlide}
+              isPaused={isPaused}
             />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+
+            {/* Audio Manager (Invisible) */}
+            <AudioManager 
+                phase={currentSlideIndex === storySlides.length - 1 && storySlides[currentSlideIndex].visualType === 'finale' ? "finale" : "story"} 
+                currentSlideIndex={currentSlideIndex} 
+            />
+
+            {/* Unified Gesture & Navigation Layer */}
+            <div 
+                className="absolute inset-0 z-40 outline-none"
+                onPointerDown={(e) => {
+                    // Start Press Timer
+                    (window as any).isLongPress = false;
+                    const timer = setTimeout(() => {
+                        setIsPaused(true);
+                        (window as any).isLongPress = true;
+                    }, 200); // 200ms threshold for "Hold"
+                    (window as any).pressTimer = timer;
+                }}
+                onPointerUp={(e) => {
+                    if ((window as any).pressTimer) clearTimeout((window as any).pressTimer);
+                    
+                    if ((window as any).isLongPress) {
+                        // Was a hold, just resume
+                        setIsPaused(false);
+                        (window as any).isLongPress = false; 
+                    } else {
+                        // Was a tap (short press)
+                        const clientX = e.clientX;
+                        const width = window.innerWidth;
+                        
+                        // 30% Left -> Previous, 70% Right -> Next
+                        if (clientX < width * 0.3) {
+                            handlePrevSlide();
+                        } else {
+                            handleNextSlide();
+                        }
+                    }
+                }}
+                onPointerLeave={() => {
+                    if ((window as any).pressTimer) clearTimeout((window as any).pressTimer);
+                    setIsPaused(false);
+                    (window as any).isLongPress = false;
+                }}
+                // Prevent default touch actions (scrolling/zooming) to ensure smooth gestures
+                style={{ touchAction: 'none' }}
+            />
+
+            {/* Slide Content */}
+            <div className="w-full h-full pointer-events-none"> 
+            {/* Content checks pointer-events-none so touches go to the main container handlers or nav layers */}
+              {storySlides[currentSlideIndex].visualType === 'finale' ? (
+                 <div className="w-full h-full pointer-events-auto relative z-50">
+                    {/* Finale needs pointer events for buttons */}
+                     <Finale onRestart={handleRestart} />
+                 </div>
+              ) : (
+                <StorySlide
+                  data={storySlides[currentSlideIndex]}
+                  isActive={true} // Always active when rendered
+                />
+              )}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </main>
   );
 }
