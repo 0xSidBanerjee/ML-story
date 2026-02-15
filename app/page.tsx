@@ -49,30 +49,7 @@ export default function Home() {
   const handlePause = () => setIsPaused(true);
   const handleResume = () => setIsPaused(false);
 
-  // ----------------------------------------------------
-  // DYNAMIC DURATION LOGIC
-  // ----------------------------------------------------
-  const getSlideDuration = (index: number) => {
-    // If it's the finale, no auto-advance functionality needed (handled by component), 
-    // but we return a value for safety.
-    if (index >= storySlides.length) return 5000;
-    
-    const slide = storySlides[index];
-    if (slide.visualType === 'finale') return 999999; // Indefinite
 
-    // Formula:
-    // Stagger Delay per line: 0.8s
-    // Initial Delay: 0.4s
-    // Fade Duration: 0.6s
-    // Reading Buffer: 3s
-    const lineCount = slide.lines ? slide.lines.length : 1;
-    const animationTime = 0.4 + ((lineCount - 1) * 0.8) + 0.6;
-    const totalDuration = (animationTime + 3.0) * 1000; // Convert to ms
-
-    return Math.max(5000, totalDuration); // Minimum 5s
-  };
-
-  const activeSlideDuration = getSlideDuration(currentSlideIndex);
 
   // ----------------------------------------------------
   // RESTART LOGIC
@@ -133,57 +110,50 @@ export default function Home() {
             exit={{ opacity: 0 }}
             className="w-full h-full"
           >
-            {/* Progress Bar - Restored and Active */}
-            <StoryProgress
-              totalSlides={storySlides.length}
-              currentIndex={currentSlideIndex}
-              duration={activeSlideDuration} // Dynamic based on text length
-              onSlideComplete={handleNextSlide}
-              isPaused={isPaused}
-            />
+            {/* Progress Bar - Static Segments (Fade out on Finale) */}
+            <motion.div
+                animate={{ opacity: storySlides[currentSlideIndex].visualType === 'finale' ? 0 : 1 }}
+                transition={{ duration: 1 }}
+                className="relative z-50"
+            >
+                <StoryProgress
+                totalSlides={storySlides.length}
+                currentIndex={currentSlideIndex}
+                />
+            </motion.div>
+
+            {/* Inactivity Hint (Tap to continue) - Disabled on Finale */}
+            <TapHint active={!isPaused && storySlides[currentSlideIndex].visualType !== 'finale'} />
 
             {/* Unified Gesture & Navigation Layer - Only for Story Slides */}
             {storySlides[currentSlideIndex].visualType !== 'finale' && (
                 <div 
                     className="absolute inset-0 z-40 outline-none"
-                    onPointerDown={(e) => {
-                        // Start Press Timer
-                        (window as any).isLongPress = false;
-                        const timer = setTimeout(() => {
-                            setIsPaused(true);
-                            (window as any).isLongPress = true;
-                        }, 200); // 200ms threshold for "Hold"
-                        (window as any).pressTimer = timer;
-                    }}
-                    onPointerUp={(e) => {
-                        if ((window as any).pressTimer) clearTimeout((window as any).pressTimer);
+                    onClick={(e) => {
+                        const clientY = e.clientY;
+                        const height = window.innerHeight;
                         
-                        if ((window as any).isLongPress) {
-                            // Was a hold, just resume
-                            setIsPaused(false);
-                            (window as any).isLongPress = false; 
-                        } else {
-                            // Was a tap (short press)
-                            // ONLY navigate if it wasn't a scroll (simple check: if duration was very short)
-                            // Ideally checking movement distance is better, but for now:
+                        // Zone Logic:
+                        // Top 60% -> Navigation Allowed
+                        // Bottom 40% -> Scroll Only (Do nothing here, let click pass through or just ignore)
+                        
+                        if (clientY < height * 0.6) {
                             const clientX = e.clientX;
                             const width = window.innerWidth;
                             
-                            // 30% Left -> Previous, 70% Right -> Next
+                            // Left 30% -> Previous
                             if (clientX < width * 0.3) {
                                 handlePrevSlide();
-                            } else if (clientX > width * 0.7) {
+                            } 
+                            // Right 70% -> Next (Larger tap area for forward progress)
+                            else {
                                 handleNextSlide();
                             }
                         }
                     }}
-                    onPointerLeave={() => {
-                        if ((window as any).pressTimer) clearTimeout((window as any).pressTimer);
-                        setIsPaused(false);
-                        (window as any).isLongPress = false;
-                    }}
-                    // Allow vertical scrolling (pan-y) but capture horizontal gestures if needed
-                    style={{ touchAction: 'pan-y' }}
+                    // Allow all touch actions (scrolling) to pass through naturally
+                    // We only capture clicks (taps)
+                    style={{ touchAction: 'auto' }}
                 />
             )}
 
@@ -234,3 +204,43 @@ export default function Home() {
     </main>
   );
 }
+
+// Visual Hint Component
+const TapHint = ({ active }: { active: boolean }) => {
+    const [visible, setVisible] = useState(false);
+
+    useEffect(() => {
+        if (!active) return;
+        
+        const timer = setTimeout(() => {
+            setVisible(true);
+        }, 5000); // Show hint after 5s of no interaction (in this case, just time on slide)
+
+        return () => {
+            clearTimeout(timer);
+            setVisible(false); // Reset if active prop changes (e.g. slide change)
+        };
+    }, [active]);
+
+    // Reset timer on any click (global listener is simpler but specific is fine too)
+    // For now, since 'active' resets on slide change, it works per slide.
+
+    return (
+        <AnimatePresence>
+            {visible && (
+                <motion.div
+                    initial={{ opacity: 0, x: 10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0 }}
+                    className="fixed right-4 top-1/2 -translate-y-1/2 z-50 pointer-events-none flex flex-col items-center gap-1"
+                >
+                    <div className="w-10 h-10 rounded-full bg-white/50 backdrop-blur-sm shadow-sm flex items-center justify-center animate-pulse">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5 text-rose-500">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                        </svg>
+                    </div>
+                </motion.div>
+            )}
+        </AnimatePresence>
+    );
+};
