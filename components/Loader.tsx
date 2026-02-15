@@ -11,27 +11,55 @@ interface LoaderProps {
 }
 
 const Loader: React.FC<LoaderProps> = ({ onComplete }) => {
-  const [step, setStep] = useState(0);
+  const [step, setStep] = useState(-1); // Start at -1 for "Tap to Open"
 
   useEffect(() => {
-    // Step 0: Analyzing... (Spinner)
-    const timeout1 = setTimeout(() => setStep(1), 3000);
-    // Step 1: Top Genre
-    const timeout2 = setTimeout(() => setStep(2), 6500); // Extended for reading
-    // Step 2: Top Artist
-    const timeout3 = setTimeout(() => setStep(3), 11000); // Giving more time for the image
-    // Step 3: Button appears
+    let timeout: NodeJS.Timeout;
+
+    if (step === 0) {
+        // Step 0: Analyzing... (Spinner) -> Wait 3s then go to Step 1
+        timeout = setTimeout(() => setStep(1), 3000);
+    } else if (step === 1) {
+        // Step 1: Top Genre -> Wait 3.5s then go to Step 2
+        timeout = setTimeout(() => setStep(2), 3500); 
+    } else if (step === 2) {
+        // Step 2: Top Artist -> Wait 4.5s then go to Step 3
+        timeout = setTimeout(() => setStep(3), 4500); 
+    }
     
     return () => {
-      clearTimeout(timeout1);
-      clearTimeout(timeout2);
-      clearTimeout(timeout3);
+      if (timeout) clearTimeout(timeout);
     };
-  }, []);
+  }, [step]);
+
+  const handleStart = () => {
+      setStep(0);
+  };
 
   return (
     <div className="fixed inset-0 flex flex-col items-center justify-center z-50 p-6 text-center select-none bg-retro-cream">
       <AnimatePresence mode="wait">
+        {step === -1 && (
+             <motion.div
+                key="step-start"
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 1.1 }}
+                className="flex flex-col items-center gap-6"
+             >
+                <h1 className="text-retro-black font-retro-sans font-bold text-3xl md:text-5xl tracking-tighter">
+                    Arpita's <br/> Valentine Story
+                </h1>
+                
+                <button
+                    onClick={handleStart}
+                    className="bg-retro-red text-retro-cream px-8 py-4 rounded-full font-retro-serif italic font-bold text-xl border-4 border-retro-black shadow-retro hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all active:scale-95 animate-bounce-subtle"
+                >
+                    Tap to Open 💌
+                </button>
+             </motion.div>
+        )}
+
         {step === 0 && (
           <motion.div
             key="step0"

@@ -17,8 +17,10 @@ const AudioManager: React.FC<AudioManagerProps> = ({ phase, currentSlideIndex })
     // Determine which track to play based on phase and slide
     let trackToPlay = null;
 
-    if (phase === "story" || phase === "finale") {
-      const slide = storySlides[currentSlideIndex];
+    if (phase === "story" || phase === "finale" || phase === "loading") {
+      // Use slide index if in story/finale phase, otherwise default to first slide song for loading
+      const slideIndexToUse = phase === "loading" ? 0 : currentSlideIndex;
+      const slide = storySlides[slideIndexToUse];
       if (slide && slide.song) {
         trackToPlay = `/songs/${slide.song}`;
       }
@@ -31,32 +33,63 @@ const AudioManager: React.FC<AudioManagerProps> = ({ phase, currentSlideIndex })
       trackToPlay = `/songs/${storySlides[storySlides.length - 1].song}`;
     }
 
+
+
     // Logic to crossfade or switch tracks
     if (trackToPlay && trackToPlay !== currentTrackId.current) {
+        // console.log(`[AudioManager] Swapping track to: ${trackToPlay}, Phase: ${phase}`);
+
       // Fade out old sound
       if (currentSound.current) {
         const oldSound = currentSound.current;
-        oldSound.fade(oldSound.volume(), 0, 1000); // Fade out over 1s
-        setTimeout(() => {
-             oldSound.unload(); // Unload after fade
-        }, 1000);
+         // Stop immediately if it's the same track to prevent echo/phasing, otherwise fade
+        if (currentTrackId.current === trackToPlay) {
+            oldSound.stop();
+            oldSound.unload();
+        } else {
+            oldSound.fade(oldSound.volume(), 0, 1000); // Fade out over 1s
+            setTimeout(() => {
+                oldSound.unload(); // Unload after fade
+            }, 1000);
+        }
       }
 
-    //   console.log(`Swapping track to: ${trackToPlay}`);
       currentTrackId.current = trackToPlay;
       
+      // No fade-in if it's the very first song (loading phase or first slide) to ensure immediate impact
+      const isFirstSongStart = (phase === "loading" || (phase === "story" && currentSlideIndex === 0));
+
       const sound = new Howl({
         src: [trackToPlay],
         loop: true, // Ensure looping as requested
-        volume: 0,  // Start silent for fade-in
+        volume: isFirstSongStart ? 0.5 : 0,  
         html5: true, // Force HTML5 Audio to stream large files
         onload: () => {
-             sound.fade(0, 0.5, 1000); // Fade in to 50% volume (not too loud)
+             if (!isFirstSongStart) {
+                sound.fade(0, 0.5, 1000); 
+             }
+        },
+        onloaderror: (id, error) => {
+            console.error(`[AudioManager] Load Error for ${trackToPlay}:`, error);
+        },
+        onplayerror: (id, error) => {
+            console.error(`[AudioManager] Play Error for ${trackToPlay}:`, error);
+            sound.once('unlock', function() {
+              sound.play();
+            });
         }
       });
       sound.play();
       currentSound.current = sound;
     }
+    
+    // Cleanup function to stop sound when component unmounts
+    return () => {
+        if (currentSound.current) {
+            currentSound.current.stop();
+            currentSound.current.unload();
+        }
+    };
   }, [phase, currentSlideIndex]);
 
   return null; // Invisible component

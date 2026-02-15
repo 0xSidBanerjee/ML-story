@@ -44,6 +44,7 @@ const config: Config = {
         "fade-in": "fadeIn 1s ease-in-out forwards",
         "fade-out": "fadeOut 1s ease-in-out forwards",
         "pulse-glow": "pulseGlow 2s infinite ease-in-out",
+        "bounce-subtle": "bounceSubtle 2s infinite",
         float: "float 6s ease-in-out infinite",
         "gradient-xy": "gradient-xy 15s ease infinite",
       },
@@ -59,6 +60,10 @@ const config: Config = {
         pulseGlow: {
           "0%, 100%": { boxShadow: "0 0 20px rgba(255, 45, 85, 0.5)" },
           "50%": { boxShadow: "0 0 40px rgba(255, 45, 85, 0.8)" },
+        },
+        bounceSubtle: {
+            "0%, 100%": { transform: "translateY(-5%)", animationTimingFunction: "cubic-bezier(0.8, 0, 1, 1)" },
+            "50%": { transform: "translateY(0)", animationTimingFunction: "cubic-bezier(0, 0, 0.2, 1)" }
         },
         float: {
             "0%, 100%": { transform: "translateY(0)" },

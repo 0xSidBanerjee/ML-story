@@ -111,6 +111,17 @@ export default function Home() {
         {showTransition && <CinematicTransition onComplete={handleTransitionComplete} />}
       </AnimatePresence>
 
+      {/* Audio Manager (Global) - Plays during loading too */}
+      <AudioManager 
+        phase={
+            loading ? "loading" :
+            showTransition ? "story" : // Keep playing first song during transition
+            (currentSlideIndex === storySlides.length - 1 && storySlides[currentSlideIndex].visualType === 'finale') ? "finale" : 
+            "story"
+        } 
+        currentSlideIndex={currentSlideIndex} 
+      />
+
       <AnimatePresence mode="wait">
         {startStory && (
           <motion.div
@@ -127,12 +138,6 @@ export default function Home() {
               duration={activeSlideDuration} // Dynamic based on text length
               onSlideComplete={handleNextSlide}
               isPaused={isPaused}
-            />
-
-            {/* Audio Manager (Invisible) */}
-            <AudioManager 
-                phase={currentSlideIndex === storySlides.length - 1 && storySlides[currentSlideIndex].visualType === 'finale' ? "finale" : "story"} 
-                currentSlideIndex={currentSlideIndex} 
             />
 
             {/* Unified Gesture & Navigation Layer */}

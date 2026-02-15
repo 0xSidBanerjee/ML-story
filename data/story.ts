@@ -16,11 +16,11 @@ export const storySlides: SlideData[] = [
     visualType: 'image',
     image: "/images/IMG-20250115-WA0016.jpg",
     lines: [
-      "It all started with a weird,\nnewspaper-print umbrella.",
+      "It started with a strange,\nnewspaper-print umbrella.",
       "One random question.",
-      "“Eta ki chaata?”",
-      "I didn’t know that silly moment\nwould become the beginning\nof my favorite story.",
-      "Since 2018,\nyou’ve been my best chapter."
+      "\"Eta ki chaata?\"",
+"I didn’t know that moment\nwould begin\nmy favorite story.",
+"Since 2018,\nyou’ve been my best chapter."
     ],
     audioKeyword: "sparkle",
     song: "Sparkle Radwimps.mp3"
@@ -31,15 +31,11 @@ export const storySlides: SlideData[] = [
     visualType: 'image',
     image: "/images/IMG-20250115-WA0024.jpg",
     lines: [
-      "12th December, 2018.",
-      "We’ve had our on and offs.",
-      "Silence.",
-      "Distance.",
-      "Moments that could’ve ended us.",
-      "But somehow,\nevery single time,\nwe found our way back.",
-      "Not because it was easy.",
-      "But because it felt right.",
-      "It’s either you.\nOr it’s no one."
+"12th December, 2018.",
+"We’ve had our on and offs.\nSilence. Distance. Almost losing us.",
+"But somehow,\nwe kept choosing each other.",
+"It was never easy.\nIt was just always you.",
+"It’s either you.\nOr it’s no one."
     ],
     audioKeyword: "compass",
     song: "Until I Found You Stephen Sanchez.mp3"
@@ -50,16 +46,12 @@ export const storySlides: SlideData[] = [
     visualType: 'image',
     image: "/images/IMG-20250128-WA0025.jpg",
     lines: [
-      "I know what you tell yourself.",
-      "That you’re the strong one.",
-      "The responsible one.",
-      "The one who carries too much.",
-      "The one who makes sure\nnobody ever feels left out…",
-      "But somehow,\nyou’re the one\nwho feels forgotten.",
-      "You are not the backup.",
-      "You are not too much.",
-      "You are not second.",
-      "You are everything to me."
+"I know what you tell yourself.",
+"That you have to be the strong one.\nThe one who carries it all.",
+"The one who makes sure\nno one feels left out.",
+"And somehow,\nyou’re the one left alone.",
+"You are not too much.\nYou were never second.",
+"You are everything to me."
     ],
     audioKeyword: "mirrorball",
     song: "Die With A Smile Bruno Mars.mp3"
@@ -70,15 +62,11 @@ export const storySlides: SlideData[] = [
     visualType: 'image',
     image: "/images/IMG-20250203-WA0035.jpg",
     lines: [
-      "I know about the panic.",
-      "The sleepless nights.",
-      "The quiet breakdowns.",
-      "The days you whisper,\n‘I am not okay.\nI’m really not okay.’",
-      "You don’t have to be strong\nevery second with me.",
-      "In your chaos.",
-      "In your calm.",
-      "In your silence.",
-      "I am here.\nAnd I’m not leaving."
+"I know about the panic.\nThe sleepless nights.\nThe quiet breaking points.",
+"The days you whisper,\n\"I’m not okay.\"",
+"You don’t have to be strong with me.",
+"In your chaos or your calm,\nI am here.\n I always will be.",
+"And I’m not leaving."
     ],
     audioKeyword: "sanctuary",
     song: "yung kai - blue.mp3"
@@ -90,16 +78,13 @@ export const storySlides: SlideData[] = [
     image: "/images/IMG-20250203-WA0099.jpg",
     lines: [
       "I know I’m not perfect.",
-      "I can be too logical\nwhen you need softness.",
-      "I understand things,\nbut sometimes delay action.",
-      "I stretch myself thin\ntrying to save everyone.",
-      "But loving you\nis teaching me growth.",
-      "I will work on my boundaries.",
-      "I will listen deeper.",
-      "I will act sooner.",
-      "I will protect our space.",
-      "And yes…\nI’ve only come once.",
-      "But that story?\nIt’s about to change."
+"I can be too logical\nwhen you need warmth.",
+"I understand… but sometimes wait too long.",
+"I give too much of myself\nto everyone else.",
+"But loving you\nis teaching me better.",
+"I will listen deeper.\nI will show up sooner.\nI will protect us.",
+"And yes… I’ve only come once to meet you.",
+"But that story?\nIt’s about to change."
     ],
     audioKeyword: "promise",
     song: "Light Switch Charlie Puth.mp3"
