@@ -27,14 +27,21 @@ const config: Config = {
             red: "#D64045", // Vintage Rose
             black: "#2D2A26", // Warm Black/Espresso
             pink: "#FFC2D1", // Pastel Pink
+        },
+        stitch: {
+            red: "#ee2b72", // Stitch Design Red
+            black: "#1a1a1a", // Stitch Design Black
+            cream: "#fbfbfb", // Stitch Design Background (simulated from screenshot)
         }
       },
       fontFamily: {
-        sans: ["var(--font-geist-sans)", "sans-serif"],
+        sans: ["var(--font-dm-sans)", "var(--font-geist-sans)", "sans-serif"], // Default sans to DM Sans
         mono: ["var(--font-geist-mono)", "monospace"],
-        serif: ["Playfair Display", "serif"],
+        serif: ["var(--font-playfair)", "serif"], // Default serif to Playfair
         "retro-serif": ["var(--font-playfair)", "serif"],
-        "retro-sans": ["var(--font-fredoka)", "sans-serif"],
+        "retro-sans": ["var(--font-dm-sans)", "sans-serif"], // Override Fredoka with DM Sans
+        "stitch-sans": ["var(--font-plus-jakarta)", "sans-serif"],
+        "dm-sans": ["var(--font-dm-sans)", "sans-serif"],
       },
       boxShadow: {
         retro: "5px 5px 0px 0px #2D2A26", // Black shadow

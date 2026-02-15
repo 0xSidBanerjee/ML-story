@@ -1,12 +1,14 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import Loader from "@/components/Loader";
+
+import IntroSequence from "@/components/IntroSequence";
 import StorySlide from "@/components/StorySlide";
 import Finale from "@/components/Finale";
 import StoryProgress from "@/components/StoryProgress";
 import AudioManager from "@/components/AudioManager";
 import CinematicTransition from "@/components/CinematicTransition";
+import MusicPlayer from "@/components/MusicPlayer";
 import { storySlides } from "@/data/story";
 
 export default function Home() {
@@ -104,7 +106,7 @@ export default function Home() {
         className="relative w-full h-screen overflow-hidden bg-retro-cream select-none touch-none"
     >
       <AnimatePresence mode="wait">
-        {loading && <Loader onComplete={handleLoaderComplete} />}
+        {loading && <IntroSequence onComplete={handleLoaderComplete} />}
       </AnimatePresence>
 
       <AnimatePresence mode="wait">
@@ -140,65 +142,95 @@ export default function Home() {
               isPaused={isPaused}
             />
 
-            {/* Unified Gesture & Navigation Layer */}
-            <div 
-                className="absolute inset-0 z-40 outline-none"
-                onPointerDown={(e) => {
-                    // Start Press Timer
-                    (window as any).isLongPress = false;
-                    const timer = setTimeout(() => {
-                        setIsPaused(true);
-                        (window as any).isLongPress = true;
-                    }, 200); // 200ms threshold for "Hold"
-                    (window as any).pressTimer = timer;
-                }}
-                onPointerUp={(e) => {
-                    if ((window as any).pressTimer) clearTimeout((window as any).pressTimer);
-                    
-                    if ((window as any).isLongPress) {
-                        // Was a hold, just resume
-                        setIsPaused(false);
-                        (window as any).isLongPress = false; 
-                    } else {
-                        // Was a tap (short press)
-                        const clientX = e.clientX;
-                        const width = window.innerWidth;
+            {/* Unified Gesture & Navigation Layer - Only for Story Slides */}
+            {storySlides[currentSlideIndex].visualType !== 'finale' && (
+                <div 
+                    className="absolute inset-0 z-40 outline-none"
+                    onPointerDown={(e) => {
+                        // Start Press Timer
+                        (window as any).isLongPress = false;
+                        const timer = setTimeout(() => {
+                            setIsPaused(true);
+                            (window as any).isLongPress = true;
+                        }, 200); // 200ms threshold for "Hold"
+                        (window as any).pressTimer = timer;
+                    }}
+                    onPointerUp={(e) => {
+                        if ((window as any).pressTimer) clearTimeout((window as any).pressTimer);
                         
-                        // 30% Left -> Previous, 70% Right -> Next
-                        if (clientX < width * 0.3) {
-                            handlePrevSlide();
+                        if ((window as any).isLongPress) {
+                            // Was a hold, just resume
+                            setIsPaused(false);
+                            (window as any).isLongPress = false; 
                         } else {
-                            handleNextSlide();
+                            // Was a tap (short press)
+                            // ONLY navigate if it wasn't a scroll (simple check: if duration was very short)
+                            // Ideally checking movement distance is better, but for now:
+                            const clientX = e.clientX;
+                            const width = window.innerWidth;
+                            
+                            // 30% Left -> Previous, 70% Right -> Next
+                            if (clientX < width * 0.3) {
+                                handlePrevSlide();
+                            } else if (clientX > width * 0.7) {
+                                handleNextSlide();
+                            }
                         }
-                    }
-                }}
-                onPointerLeave={() => {
-                    if ((window as any).pressTimer) clearTimeout((window as any).pressTimer);
-                    setIsPaused(false);
-                    (window as any).isLongPress = false;
-                }}
-                // Prevent default touch actions (scrolling/zooming) to ensure smooth gestures
-                style={{ touchAction: 'none' }}
-            />
+                    }}
+                    onPointerLeave={() => {
+                        if ((window as any).pressTimer) clearTimeout((window as any).pressTimer);
+                        setIsPaused(false);
+                        (window as any).isLongPress = false;
+                    }}
+                    // Allow vertical scrolling (pan-y) but capture horizontal gestures if needed
+                    style={{ touchAction: 'pan-y' }}
+                />
+            )}
 
             {/* Slide Content */}
-            <div className="w-full h-full pointer-events-none"> 
-            {/* Content checks pointer-events-none so touches go to the main container handlers or nav layers */}
-              {storySlides[currentSlideIndex].visualType === 'finale' ? (
-                 <div className="w-full h-full pointer-events-auto relative z-50">
-                    {/* Finale needs pointer events for buttons */}
-                     <Finale onRestart={handleRestart} />
-                 </div>
-              ) : (
-                <StorySlide
-                  data={storySlides[currentSlideIndex]}
-                  isActive={true} // Always active when rendered
-                />
-              )}
+            <div className="w-full h-full pointer-events-auto relative z-30"> 
+              <AnimatePresence mode="wait">
+                  {storySlides[currentSlideIndex].visualType === 'finale' ? (
+                     <motion.div 
+                        key="finale"
+                        className="w-full h-full pointer-events-auto relative z-50"
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -20 }}
+                        transition={{ duration: 0.8, ease: "easeInOut" }}
+                     >
+                        <Finale onRestart={handleRestart} />
+                     </motion.div>
+                  ) : (
+                    <motion.div
+                        key={`slide-${currentSlideIndex}`}
+                        className="w-full h-full"
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -20 }}
+                        transition={{ duration: 0.8, ease: "easeInOut" }}
+                    >
+                        <StorySlide
+                          data={storySlides[currentSlideIndex]}
+                          isActive={true} 
+                        />
+                    </motion.div>
+                  )}
+              </AnimatePresence>
             </div>
           </motion.div>
         )}
       </AnimatePresence>
+      
+      {/* Persistent Music Player */}
+      <MusicPlayer 
+        currentSongTitle={
+            loading || showTransition 
+                ? (storySlides[0].songTitle || "Sparkle - Radwimps") 
+                : (storySlides[currentSlideIndex].songTitle || "Story Song")
+        } 
+        isPlaying={!isPaused}
+      />
     </main>
   );
 }

@@ -7,6 +7,7 @@ export interface SlideData {
   lines: string[];
   audioKeyword?: string;
   song?: string; // New property for audio filename
+  songTitle?: string; // Clean title for Music Player
 }
 
 export const storySlides: SlideData[] = [
@@ -23,7 +24,8 @@ export const storySlides: SlideData[] = [
 "Since 2018,\nyou’ve been my best chapter."
     ],
     audioKeyword: "sparkle",
-    song: "Sparkle Radwimps.mp3"
+    song: "Sparkle Radwimps.mp3",
+    songTitle: "Sparkle - Radwimps"
   },
   {
     id: 2,
@@ -38,7 +40,8 @@ export const storySlides: SlideData[] = [
 "It’s either you.\nOr it’s no one."
     ],
     audioKeyword: "compass",
-    song: "Until I Found You Stephen Sanchez.mp3"
+    song: "Until I Found You Stephen Sanchez.mp3",
+    songTitle: "Until I Found You - Stephen Sanchez"
   },
   {
     id: 3,
@@ -54,7 +57,8 @@ export const storySlides: SlideData[] = [
 "You are everything to me."
     ],
     audioKeyword: "mirrorball",
-    song: "Die With A Smile Bruno Mars.mp3"
+    song: "Die With A Smile Bruno Mars.mp3",
+    songTitle: "Die With A Smile - Lady Gaga & Bruno Mars"
   },
   {
     id: 4,
@@ -69,7 +73,8 @@ export const storySlides: SlideData[] = [
 "And I’m not leaving."
     ],
     audioKeyword: "sanctuary",
-    song: "yung kai - blue.mp3"
+    song: "yung kai - blue.mp3",
+    songTitle: "Blue - Yung Kai"
   },
   {
     id: 5,
@@ -78,16 +83,17 @@ export const storySlides: SlideData[] = [
     image: "/images/IMG-20250203-WA0099.jpg",
     lines: [
       "I know I’m not perfect.",
-"I can be too logical\nwhen you need warmth.",
-"I understand… but sometimes wait too long.",
-"I give too much of myself\nto everyone else.",
-"But loving you\nis teaching me better.",
-"I will listen deeper.\nI will show up sooner.\nI will protect us.",
-"And yes… I’ve only come once to meet you.",
-"But that story?\nIt’s about to change."
+      "I can be too logical\nwhen you need warmth.",
+      "I understand… but sometimes wait too long.",
+      "I give too much of myself\nto everyone else.",
+      "But loving you\nis teaching me better.",
+      "I will listen deeper.\nI will show up sooner.\nI will protect us.",
+      "And yes… I’ve only come once to meet you.",
+      "But that story?\nIt’s about to change."
     ],
     audioKeyword: "promise",
-    song: "Light Switch Charlie Puth.mp3"
+    song: "Light Switch Charlie Puth.mp3",
+    songTitle: "Light Switch - Charlie Puth"
   },
   {
     id: 6,
@@ -104,7 +110,8 @@ export const storySlides: SlideData[] = [
       "And that never fades."
     ],
     audioKeyword: "forever",
-    song: "her JVKE.mp3"
+    song: "her JVKE.mp3",
+    songTitle: "Her - JVKE"
   },
   {
     id: 7,
@@ -120,6 +127,7 @@ export const storySlides: SlideData[] = [
         "Will you be my Valentine\nfor ever and ever?"
     ],
     audioKeyword: "finale",
-    song: "I Think They Call This Love.mp3"
+    song: "I Think They Call This Love.mp3",
+    songTitle: "I Think They Call This Love - Elliot James Reay"
   }
 ];

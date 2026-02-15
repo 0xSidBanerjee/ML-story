@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef } from "react";
-import { Howl } from "howler"; 
+import { Howl, Howler } from "howler"; 
 import { storySlides } from "../data/story";
 
 interface AudioManagerProps {
@@ -83,14 +83,18 @@ const AudioManager: React.FC<AudioManagerProps> = ({ phase, currentSlideIndex })
       currentSound.current = sound;
     }
     
-    // Cleanup function to stop sound when component unmounts
-    return () => {
-        if (currentSound.current) {
-            currentSound.current.stop();
-            currentSound.current.unload();
-        }
-    };
   }, [phase, currentSlideIndex]);
+
+  // Separate effect for cleanup on unmount ONLY
+  useEffect(() => {
+    return () => {
+      if (currentSound.current) {
+        currentSound.current.stop();
+        currentSound.current.unload();
+      }
+      Howler.unload();
+    };
+  }, []);
 
   return null; // Invisible component
 };

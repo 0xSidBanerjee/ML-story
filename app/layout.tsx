@@ -1,5 +1,4 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono, Fraunces, Fredoka, Playfair_Display } from "next/font/google";
+import { Geist, Geist_Mono, Fraunces, Fredoka, Playfair_Display, Plus_Jakarta_Sans, DM_Sans } from "next/font/google";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -25,11 +24,27 @@ const fredoka = Fredoka({
   display: 'swap',
 });
 
+// Title Font: Playfair Display (Bold/ExtraBold)
 const playfair = Playfair_Display({
   variable: "--font-playfair",
   subsets: ["latin"],
+  weight: ['400', '500', '600', '700', '800', '900'],
   style: ['normal', 'italic'],
   display: 'swap',
+});
+
+const plusJakarta = Plus_Jakarta_Sans({
+  variable: "--font-plus-jakarta",
+  subsets: ["latin"],
+  display: 'swap',
+});
+
+// Body Font: DM Sans (Geometric, modern)
+const dmSans = DM_Sans({
+    variable: "--font-dm-sans",
+    subsets: ["latin"],
+    weight: ["400", "500", "700"],
+    display: 'swap',
 });
 
 export const metadata: Metadata = {
@@ -45,7 +60,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${fraunces.variable} ${fredoka.variable} ${playfair.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} ${fraunces.variable} ${fredoka.variable} ${playfair.variable} ${plusJakarta.variable} ${dmSans.variable} antialiased`}
       >
         {children}
       </body>
