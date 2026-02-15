@@ -82,16 +82,17 @@ const AudioManager: React.FC<AudioManagerProps> = ({ phase, currentSlideIndex })
             console.error(`[AudioManager] Load Error for ${trackToPlay}:`, error);
         },
         onplayerror: (id, error) => {
-            console.error(`[AudioManager] Play Error for ${trackToPlay}:`, error);
+            // console.warn(`[AudioManager] Play Locked for ${trackToPlay}:`, error);
             sound.once('unlock', function() {
-              // Vital Check: Only play if this sound is still the 'current' one managed by this component
-              if (currentSound.current === sound) {
+              // Vital Check: Only play if this sound is still current AND not already playing (to prevent echo)
+              if (currentSound.current === sound && !sound.playing()) {
                   sound.play();
               }
             });
         }
       });
       
+      // Attempt play immediately
       sound.play();
       currentSound.current = sound;
     } else if (!trackToPlay && currentSound.current) {
