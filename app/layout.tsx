@@ -1,4 +1,5 @@
-import { Geist, Geist_Mono, Fraunces, Fredoka, Playfair_Display, Plus_Jakarta_Sans, DM_Sans } from "next/font/google";
+import type { Metadata } from "next";
+import { Geist, Geist_Mono, Fraunces, Fredoka, Playfair_Display, Plus_Jakarta_Sans, DM_Sans, Great_Vibes } from "next/font/google";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -47,6 +48,14 @@ const dmSans = DM_Sans({
     display: 'swap',
 });
 
+// Script: Great Vibes (Handwritten)
+const greatVibes = Great_Vibes({
+    variable: "--font-great-vibes",
+    subsets: ["latin"],
+    weight: ["400"],
+    display: 'swap',
+});
+
 export const metadata: Metadata = {
   title: "Arpita's Wrapped 2026",
   description: "A story about us.",
@@ -60,10 +69,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${fraunces.variable} ${fredoka.variable} ${playfair.variable} ${plusJakarta.variable} ${dmSans.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} ${fraunces.variable} ${fredoka.variable} ${playfair.variable} ${plusJakarta.variable} ${dmSans.variable} ${greatVibes.variable} antialiased`}
       >
         {children}
       </body>
     </html>
   );
 }
+

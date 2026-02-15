@@ -19,6 +19,8 @@ export default function Home() {
   const [isPaused, setIsPaused] = useState(false);
   const [restartKey, setRestartKey] = useState(0); // Key to force re-render/reset
 
+  const [isEpilogue, setIsEpilogue] = useState(false);
+
   // Handle Loader Complete -> Phase B
   const handleLoaderComplete = () => {
     setLoading(false);
@@ -50,7 +52,6 @@ export default function Home() {
   const handleResume = () => setIsPaused(false);
 
 
-
   // ----------------------------------------------------
   // RESTART LOGIC
   // ----------------------------------------------------
@@ -62,6 +63,7 @@ export default function Home() {
     setStartStory(false);
     setCurrentSlideIndex(0);
     setIsPaused(false);
+    setIsEpilogue(false);
   };
 
   // Preload Images
@@ -93,6 +95,7 @@ export default function Home() {
       {/* Audio Manager (Global) - Plays during loading too */}
       <AudioManager 
         phase={
+            isEpilogue ? "epilogue" :
             loading ? "loading" :
             showTransition ? "story" : // Keep playing first song during transition
             (currentSlideIndex === storySlides.length - 1 && storySlides[currentSlideIndex].visualType === 'finale') ? "finale" : 
@@ -169,7 +172,10 @@ export default function Home() {
                         exit={{ opacity: 0, y: -20 }}
                         transition={{ duration: 0.8, ease: "easeInOut" }}
                      >
-                        <Finale onRestart={handleRestart} />
+                        <Finale 
+                            onRestart={handleRestart}
+                            // onEpilogueStart removed as audio should continue
+                        />
                      </motion.div>
                   ) : (
                     <motion.div

@@ -24,6 +24,13 @@ const AudioManager: React.FC<AudioManagerProps> = ({ phase, currentSlideIndex })
       if (slide && slide.song) {
         trackToPlay = `/songs/${slide.song}`;
       }
+    } else if (phase === "epilogue") {
+      // User requested: "ends the current playing song and again it all starts from the very first song"
+      // So we pick the song from the first slide (Index 0)
+      const firstSlide = storySlides[0];
+      if (firstSlide && firstSlide.song) {
+         trackToPlay = `/songs/${firstSlide.song}`;
+      }
     } else if (phase === "success") {
       // Keep playing the finale song or switch to a "Success" anthem if desired.
       // For now, let's keep the finale song playing or loop it.

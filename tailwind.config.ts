@@ -42,6 +42,7 @@ const config: Config = {
         "retro-sans": ["var(--font-dm-sans)", "sans-serif"], // Override Fredoka with DM Sans
         "stitch-sans": ["var(--font-plus-jakarta)", "sans-serif"],
         "dm-sans": ["var(--font-dm-sans)", "sans-serif"],
+        "script": ["var(--font-great-vibes)", "cursive"],
       },
       boxShadow: {
         retro: "5px 5px 0px 0px #2D2A26", // Black shadow
