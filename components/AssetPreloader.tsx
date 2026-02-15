@@ -40,6 +40,14 @@ const AssetPreloader = () => {
                 height={10}
                 priority={true}
             />
+
+            {/* Pre-render Fonts & Emojis */}
+            <span className="font-script" style={{ fontFamily: 'var(--font-great-vibes), cursive' }}>
+                With love, from ML
+            </span>
+            <span>
+                🌷 🌹 ❤️ 🎧 📖 💬 🕯️ ✨
+            </span>
         </div>
     );
 };
