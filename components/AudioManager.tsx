@@ -49,28 +49,30 @@ const AudioManager: React.FC<AudioManagerProps> = ({ phase, currentSlideIndex })
       // Fade out old sound
       if (currentSound.current) {
         const oldSound = currentSound.current;
-         // Stop immediately if it's the same track to prevent echo/phasing, otherwise fade
+        // Stop immediately if it's the same track to prevent echo/phasing
         if (currentTrackId.current === trackToPlay) {
+             // This branch shouldn't ideally be hit due to the check above, but safe guard
             oldSound.stop();
             oldSound.unload();
         } else {
             oldSound.fade(oldSound.volume(), 0, 1000); // Fade out over 1s
             setTimeout(() => {
-                oldSound.unload(); // Unload after fade
+                // Only unload if it hasn't been reassigned (though we use closure var)
+                oldSound.unload(); 
             }, 1000);
         }
       }
 
       currentTrackId.current = trackToPlay;
       
-      // No fade-in if it's the very first song (loading phase or first slide) to ensure immediate impact
       const isFirstSongStart = (phase === "loading" || (phase === "story" && currentSlideIndex === 0));
 
       const sound = new Howl({
         src: [trackToPlay],
-        loop: true, // Ensure looping as requested
+        loop: true, 
+        preload: true, // Force preload
         volume: isFirstSongStart ? 0.5 : 0,  
-        html5: true, // Force HTML5 Audio to stream large files
+        html5: true, 
         onload: () => {
              if (!isFirstSongStart) {
                 sound.fade(0, 0.5, 1000); 
@@ -82,12 +84,22 @@ const AudioManager: React.FC<AudioManagerProps> = ({ phase, currentSlideIndex })
         onplayerror: (id, error) => {
             console.error(`[AudioManager] Play Error for ${trackToPlay}:`, error);
             sound.once('unlock', function() {
-              sound.play();
+              // Vital Check: Only play if this sound is still the 'current' one managed by this component
+              if (currentSound.current === sound) {
+                  sound.play();
+              }
             });
         }
       });
+      
       sound.play();
       currentSound.current = sound;
+    } else if (!trackToPlay && currentSound.current) {
+        // Handle case where we should stop playing (trackToPlay is null)
+        currentSound.current.stop();
+        currentSound.current.unload();
+        currentSound.current = null;
+        currentTrackId.current = null;
     }
     
   }, [phase, currentSlideIndex]);
@@ -98,8 +110,9 @@ const AudioManager: React.FC<AudioManagerProps> = ({ phase, currentSlideIndex })
       if (currentSound.current) {
         currentSound.current.stop();
         currentSound.current.unload();
+        currentSound.current = null;
       }
-      Howler.unload();
+      currentTrackId.current = null;
     };
   }, []);
 

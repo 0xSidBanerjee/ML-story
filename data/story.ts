@@ -88,7 +88,7 @@ export const storySlides: SlideData[] = [
       "I give too much of myself\nto everyone else.",
       "But loving you\nis teaching me better.",
       "I will listen deeper.\nI will show up sooner.\nI will protect us.",
-      "And yes… I’ve only come to meet you soon ;)"
+      "And yes… I’ll come over to meet you soon ;)"
     ],
     audioKeyword: "promise",
     song: "Light Switch Charlie Puth.mp3",

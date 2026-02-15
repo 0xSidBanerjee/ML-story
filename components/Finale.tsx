@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import confetti from "canvas-confetti";
 import { DAYS_SINCE_START } from "../utils/date";
@@ -336,65 +337,90 @@ const Finale: React.FC<FinaleProps> = ({ onRestart }) => {
         )}
 
         {/* PHASE 4: Playlist Reveal (Light Glass Vinyl) */}
-        {!inEpilogue && successPhase === 4 && (
-            <motion.div
-                key="phase-4"
-                initial={{ opacity: 0, y: 40 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 1, ease: "easeOut" }}
-                className="w-full max-w-lg relative z-20"
-            >
-                {/* Light Glass Container */}
-                <div className="backdrop-blur-md bg-white/40 border border-white/60 rounded-3xl p-8 shadow-2xl flex flex-col gap-8 items-center">
-                    
-                    {/* Spinning Vinyl Album Art */}
-                    <div className="relative w-64 h-64 rounded-full shadow-2xl overflow-hidden shrink-0 group animate-[spin_8s_linear_infinite]">
-                        <img src="/images/album-art.jpg" alt="Us" className="w-full h-full object-cover" />
+        {successPhase >= 4 && (
+                <motion.div
+                    className="absolute inset-0 flex flex-col items-center justify-center p-6 z-20"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: showOneMoreThing ? 1 : (inEpilogue ? 0 : 1) }} // Fade out when epilogue starts
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 1 }}
+                >
+                    {/* Soft Glass Container - Compact & Lifted */}
+                    <div className="backdrop-blur-xl bg-white/60 border border-white/40 rounded-3xl p-8 shadow-2xl flex flex-col gap-6 items-center -translate-y-10"> 
                         
-                        {/* Vinyl Shine/Glare */}
-                        <div className="absolute inset-0 opacity-40 bg-gradient-to-tr from-transparent via-white/30 to-transparent pointer-events-none" />
-                        
-                        {/* Center Hole */}
-                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-8 bg-stone-100 rounded-full border-2 border-stone-300 shadow-inner" />
-                    </div>
+                        {/* Album Art - Vinyl Style */}
+                        <div className="relative w-48 h-48 md:w-56 md:h-56 rounded-full shadow-2xl overflow-hidden shrink-0 group">
+                            {/* Spinning Animation Helper */}
+                            <motion.div 
+                                animate={{ rotate: 360 }}
+                                transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
+                                className="w-full h-full"
+                            >
+                                <div className="w-full h-full relative">
+                                    <Image 
+                                        src="/images/album-art.jpg" 
+                                        alt="Us" 
+                                        fill
+                                        className="object-cover" 
+                                    />
+                                     {/* Vinyl texture overlay */}
+                                    <div className="absolute inset-0 rounded-full border-2 border-black/5 opacity-20" />
+                                    <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/20 to-transparent pointer-events-none" />
+                                     {/* Center Hole for Vinyl Effect */}
+                                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-4 bg-stone-100 rounded-full border border-stone-300 shadow-inner z-10" />
+                                </div>
+                            </motion.div>
+                             {/* Soft Glare */}
+                            <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/10 to-white/30 pointer-events-none rounded-full" />
+                        </div>
 
-                    {/* Text Info */}
-                    <div className="text-center flex flex-col gap-3 relative z-10">
-                        <h2 className="text-stone-900 font-retro-serif font-bold text-3xl md:text-4xl tracking-tight">
-                            The Us Mix
-                        </h2>
-                        <p className="text-stone-600 font-dm-sans text-sm md:text-base leading-relaxed max-w-sm mx-auto font-medium">
-                            Distance is just geography. I curated this to bridge the miles between us. For your sleepless nights, your anxious days, and every moment you need a hand to hold.<br/>
-                            <span className="font-bold text-[#8a1c3d] mt-2 block">I’m always with you.</span>
-                        </p>
-                    </div>
+                        {/* Text Info */}
+                        <div className="text-center flex flex-col gap-3 relative z-10 mt-2">
+                            <h2 className="text-[#8a1c3d] font-retro-serif font-bold text-3xl md:text-4xl tracking-tight">
+                                The Us Mix
+                            </h2>
+                            <p className="text-stone-700 font-dm-sans text-sm md:text-base leading-relaxed max-w-sm mx-auto font-medium">
+                                Distance is just geography. I curated this to bridge the miles between us. For your sleepless nights, your anxious days, and every moment you need a hand to hold.<br/>
+                                <span className="font-bold text-[#8a1c3d] mt-2 block">I’m always with you.</span>
+                            </p>
+                        </div>
 
-                    {/* YouTube Music Button */}
-                    <a 
-                            href="https://music.youtube.com/playlist?list=PLcGGlAj226t9AOFGmvrC-BCP8ttg1dNx-" 
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="bg-[#FF0000] text-white px-8 py-3 rounded-full font-bold text-base tracking-wide border-2 border-white shadow-[0_4px_15px_rgba(255,0,0,0.3)] hover:shadow-[0_6px_25px_rgba(255,0,0,0.5)] hover:scale-105 transition-all flex items-center gap-3 animate-pulse whitespace-nowrap"
-                    >
-                        <div className="w-0 h-0 border-t-[6px] border-t-transparent border-l-[10px] border-l-white border-b-[6px] border-b-transparent ml-1" />
-                        Play Our Soundtrack
-                    </a>
-                    
-                    {/* One More Thing... Link */}
-                    {showOneMoreThing && (
-                        <motion.button
-                            onClick={handleOneMoreThingClick}
-                            initial={{ opacity: 0, y: 10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 1 }}
-                            className="text-stone-500 font-retro-serif italic text-sm hover:text-rose-600 transition-colors mt-2"
+                        {/* YouTube Music Button */}
+                        <a 
+                                href="https://music.youtube.com/playlist?list=PL2-2-V-2-2-2-2-2" 
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="group relative px-8 py-3 bg-transparent border-2 border-[#ff2d55] text-[#ff2d55] rounded-full font-bold text-sm md:text-base tracking-wider hover:bg-[#ff2d55] hover:text-white transition-all duration-300 flex items-center gap-2 overflow-hidden shadow-sm hover:shadow-lg hover:-translate-y-0.5"
                         >
-                            One more thing...
-                        </motion.button>
-                    )}
-                </div>
-            </motion.div>
-        )}
+                                <span className="relative z-10 flex items-center gap-2">
+                                    Play Our Soundtrack <span className="group-hover:translate-x-1 transition-transform">🎧</span>
+                                </span>
+                        </a>
+
+                        {/* One More Thing Link - Inside Card */}
+                        <AnimatePresence>
+                            {showOneMoreThing && !inEpilogue && (
+                                <motion.button
+                                    onClick={handleOneMoreThingClick}
+                                    initial={{ opacity: 0, y: 5 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0 }}
+                                    transition={{ 
+                                        delay: 2, // Wait 2s after playlist appears
+                                        duration: 1,
+                                        repeat: Infinity,
+                                        repeatType: "reverse",
+                                        repeatDelay: 0.5
+                                    }}
+                                    className="mt-2 text-[#8a1c3d] opacity-70 hover:opacity-100 font-retro-serif italic text-sm border-b border-[#8a1c3d]/30 hover:border-[#8a1c3d] transition-all pb-0.5"
+                                >
+                                    One more thing...
+                                </motion.button>
+                            )}
+                        </AnimatePresence>
+                    </div>
+                </motion.div>
+            )}
       </AnimatePresence>
     </div>
   );

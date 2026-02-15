@@ -9,6 +9,7 @@ import StoryProgress from "@/components/StoryProgress";
 import AudioManager from "@/components/AudioManager";
 import CinematicTransition from "@/components/CinematicTransition";
 import MusicPlayer from "@/components/MusicPlayer";
+import AssetPreloader from "@/components/AssetPreloader";
 import { storySlides } from "@/data/story";
 
 export default function Home() {
@@ -66,24 +67,13 @@ export default function Home() {
     setIsEpilogue(false);
   };
 
-  // Preload Images
-  useEffect(() => {
-    storySlides.forEach((slide) => {
-      if (slide.image) {
-        const link = document.createElement("link");
-        link.rel = "preload";
-        link.as = "image";
-        link.href = slide.image;
-        document.head.appendChild(link);
-      }
-    });
-  }, []);
-
   return (
     <main 
         key={restartKey}
         className="relative w-full h-screen overflow-hidden bg-retro-cream select-none touch-none"
     >
+      <AssetPreloader />
+
       <AnimatePresence mode="wait">
         {loading && <IntroSequence onComplete={handleLoaderComplete} />}
       </AnimatePresence>
