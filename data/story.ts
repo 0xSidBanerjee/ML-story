@@ -17,7 +17,7 @@ export const storySlides: SlideData[] = [
     visualType: 'image',
     image: "/images/IMG-20250115-WA0016.jpg",
     lines: [
-      "It started with a strange,\nnewspaper-print umbrella.",
+      "It started with your strange,\nnewspaper-print umbrella.",
       "One random question.",
       "\"Eta ki chaata?\"",
 "I didn’t know that moment\nwould begin\nmy favorite story.",
@@ -53,7 +53,7 @@ export const storySlides: SlideData[] = [
 "That you have to be the strong one.\nThe one who carries it all.",
 "The one who makes sure\nno one feels left out.",
 "And somehow,\nyou’re the one left alone.",
-"You are not too much.\nYou were never second.",
+"You are not too much.\nYou were never second to me.",
 "You are everything to me."
     ],
     audioKeyword: "mirrorball",
@@ -70,7 +70,7 @@ export const storySlides: SlideData[] = [
 "The days you whisper,\n\"I’m not okay.\"",
 "You don’t have to be strong with me.",
 "In your chaos or your calm,\nI am here.\n I always will be.",
-"And I’m not leaving."
+"And I’m not leaving you, ever."
     ],
     audioKeyword: "sanctuary",
     song: "yung kai - blue.mp3",
@@ -89,7 +89,7 @@ export const storySlides: SlideData[] = [
       "But loving you\nis teaching me better.",
       "I will listen deeper.\nI will show up sooner.\nI will protect us.",
       "And yes… I’ve only come once to meet you.",
-      "But that story?\nIt’s about to change."
+      "But that story?\nIt’s about to change ;)"
     ],
     audioKeyword: "promise",
     song: "Light Switch Charlie Puth.mp3",
